@@ -8,7 +8,6 @@ Bir öğrenme projesi: aynı veri üzerinde alt metin ve tam metin aramasının 
 
 ![Çalışan arama karşılaştırması](docs/search-comparison.jpg)
 
-İlham alınan video: [Full text search using Elasticsearch — demo bölümü](https://www.youtube.com/watch?v=7_sovzAhRSM&t=1324s). Bu repo bağımsız yeniden uygulamadır; videonun orijinal kaynak kodu değildir.
 
 ## Özellikler
 
@@ -166,35 +165,12 @@ Bunlar performans garantisi veya kontrollü benchmark değildir. Donanım ve ön
 
 İlk kurulumda üretim derlemesi, üç birim testi, veritabanı doğrulaması ve tarayıcı üzerinden sonuç akışı kontrol edilmiştir.
 
-## Videoyla aynı olanlar ve farklar
-
-- `reviews`: `id`, `review`, `sentiment` alanları; 1.000 kayıtlık toplu yükleme.
-- Elasticsearch `review:text`, `sentiment:keyword`; video modunda `*terim*` query_string.
-- Next.js App Router, `app/api/search/route.ts`, `lib/neon.ts`, `lib/elasticsearch.ts`, `components/search-results-display.tsx`, `scripts/populate.js`.
-- Videoda Neon ve Elastic Cloud kullanılıyor. Burada hesap açmadan denemek için yerel Docker varsayılan; bulut bağlantıları da destekleniyor.
-- Veri kaynağı videoda belirtilmemiş. Aynı şemadaki 50K IMDb veri kümesi kullanılıyor; kaynak `scripts/data/README.md` içinde.
-- Ağ yükünü sınırlamak için iki tarafta tüm eşleşmeler sayılır, ilk 20 yorum gösterilir. Videodaki sorgunun birebir performans sonucu hedeflenmez.
-- Veri silme otomatik yapılmaz. `populate` dolu hedefte durur. Aynı CSV ile yarım kalan işlemi `npm.cmd run populate -- --resume` sürdürür; eşleşen ID'leri günceller. Farklı CSV için ayrı test veritabanı ve indeks kullanın.
-
 ## Sürelerin anlamı
 
 Her paneldeki süre Next.js sunucusundan sorgunun gönderilmesi, bağlantı/yanıt ve sonuçların okunmasını içerir; tarayıcıya aktarım ve çizim süresini içermez. Elasticsearch `took` ayrıca yalnızca motorun raporladığı süredir ve PostgreSQL gidiş-dönüş süresiyle doğrudan kıyaslanmamalıdır. Başarısız veya kısmi sorgular başarı diye gösterilmez.
 
 Bu karşılaştırma metin indeksi olmayan PostgreSQL ILIKE ile Elasticsearch arasındadır. PostgreSQL GIN/pg_trgm veya native full-text-search performansını ölçmez. ILIKE alt metin, query_string analiz edilmiş terimler arar: eşit sayıda sonuç garanti edilmez. Önbellek, ilk bağlantı, donanım ve ağ etkili olduğundan Elasticsearch'ün her sorguda hızlı çıkması beklenmemeli. Yerelde PostgreSQL de çok hızlı olabilir.
 
-## Neon / Elastic Cloud
-
-`.env.local` içinde:
-
-```dotenv
-DATABASE_DRIVER=neon
-DATABASE_URL=postgresql://...Neon bağlantı adresiniz...
-ELASTICSEARCH_URL=https://...Elastic Cloud endpoint...
-ELASTICSEARCH_API_KEY=...API anahtarınız...
-ELASTICSEARCH_INDEX=reviews
-```
-
-Yeni ve boş bir test veritabanı/indeksi seçin, `npm.cmd run data:download` ve `npm.cmd run populate` çalıştırın. `.env.local` dosyasını paylaşmayın veya Git'e eklemeyin. Neon HTTP sürücüsü yalnızca Neon için; normal PostgreSQL için `DATABASE_DRIVER=postgres` kullanılır. Kaynaklar: https://nextjs.org/docs/app/getting-started/installation ve https://www.elastic.co/docs/reference/query-languages/query-dsl/query-dsl-query-string-query
 
 ## Sorun giderme
 
