@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.env*
+!.env.example
+*.tsbuildinfo
+scripts/data/*.csv
+scripts/data/*.part
+*.log
